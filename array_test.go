@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"testing"
 )
 
@@ -663,4 +664,235 @@ func TestDifferenceUnsorted(t *testing.T) {
 	test1 := []int{2, 6, 10, 15, 25}
 	test2 := []int{3, 6, 7, 15, 20}
 	fmt.Println(differenceUnsorted(test1, test2)) // 2 10 25
+}
+
+// Expectes nums to be 1...N with a single missing element
+func findMissingElement1(nums []int) int {
+	n := len(nums)
+	sum := 0
+	max := nums[0]
+
+	// Get the sum of nums and max value
+	for i := 0; i < n; i++ {
+		sum += nums[i]
+		if nums[i] > max {
+			max = nums[i]
+		}
+	}
+
+	// Caclulated the expected consecutive sum
+	expectedSum := max * (max + 1) / 2
+
+	return expectedSum - sum
+}
+
+func TestFindMissingElement1(t *testing.T) {
+	fmt.Println(findMissingElement1([]int{1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12})) // 7
+	fmt.Println(findMissingElement1([]int{12, 8, 3, 9, 5, 6, 11, 1, 10, 4, 2})) // 7
+}
+
+func findMissingElement2(nums []int) (int, error) {
+	n := len(nums)
+
+	// Sort the array
+	sort.Ints(nums)
+
+	// Expected difference from val-idx
+	diff := nums[0]
+
+	for i := 0; i < n; i++ {
+		if nums[i]-i != diff {
+			// Found missing!
+			return i + diff, nil
+		}
+	}
+
+	return 0, fmt.Errorf("no missing element")
+}
+
+func TestFindMissingElement2(t *testing.T) {
+	test := []int{6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17}
+	miss, err := findMissingElement2(test)
+	if err != nil {
+		t.Fatalf("expected no error, got: %s", err)
+	}
+
+	fmt.Println(miss) // 12
+
+	test = []int{17, 6, 16, 7, 15, 8, 14, 9, 13, 10, 11}
+	miss, err = findMissingElement2(test)
+	if err != nil {
+		t.Fatalf("expected no error, got: %s", err)
+	}
+
+	fmt.Println(miss) // 12
+}
+
+func findMissingElements(nums []int) []int {
+	n := len(nums)
+	res := make([]int, 0, n)
+
+	// Sort the array
+	sort.Ints(nums)
+
+	// Expected different
+	diff := nums[0]
+
+	for i := 0; i < n; i++ {
+		currentDiff := nums[i] - i
+
+		if currentDiff != diff {
+			// Handles cases where multiple values missing between indexes
+			for diff < currentDiff {
+				missing := i + diff
+				res = append(res, missing)
+
+				diff++
+			}
+		}
+	}
+
+	return res
+}
+
+func TestFindMissingElements(t *testing.T) {
+	fmt.Println(findMissingElements([]int{6, 7, 8, 9, 11, 12, 15, 16, 17, 18, 19})) // 10 13 14
+	fmt.Println(findMissingElements([]int{19, 6, 18, 7, 17, 8, 16, 9, 15, 11, 12})) // 10 13 14
+}
+
+func findMissingElements2(nums []int) []int {
+	n := len(nums)
+	missing := make([]int, 0, n)
+	min := nums[0]
+	max := nums[0]
+
+	// Set min and max
+	for i := 0; i < n; i++ {
+		if nums[i] < min {
+			min = nums[i]
+		}
+
+		if nums[i] > max {
+			max = nums[i]
+		}
+	}
+
+	// Create hash table for missing lookup
+	hashTable := make([]int, max+1)
+
+	for i := 0; i < n; i++ {
+		// Use the value from nums as the hash index
+		hash := nums[i]
+
+		// Update the bit/count in the hash table to show this number exists
+		hashTable[hash]++
+	}
+
+	// Iterate the hash table to find missing numbers
+	for i := min; i < max; i++ {
+		if hashTable[i] == 0 {
+			missing = append(missing, i)
+		}
+	}
+
+	return missing
+}
+
+func TestFindMissingElements2(t *testing.T) {
+	fmt.Println(findMissingElements2([]int{6, 7, 8, 9, 11, 12, 15, 16, 17, 18, 19})) // 10 13 14
+	fmt.Println(findMissingElements2([]int{19, 6, 18, 7, 17, 8, 16, 9, 15, 11, 12})) // 10 13 14
+}
+
+func duplicatesInSorted(nums []int) []int {
+	lastDuplicate := 0
+	res := make([]int, 0, len(nums))
+
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i] == nums[i+1] && nums[i] != lastDuplicate {
+			res = append(res, nums[i])
+			lastDuplicate = nums[i]
+		}
+	}
+
+	return res
+}
+
+func TestDuplicatesInSorted(t *testing.T) {
+	fmt.Println(duplicatesInSorted([]int{3, 6, 8, 8, 10, 12, 15, 15, 15, 20})) // 8 15
+}
+
+func duplicatesAndCountInSorted(nums []int) [][]int {
+	var res [][]int
+
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i] == nums[i+1] {
+			j := i + 1
+
+			for nums[j] == nums[i] {
+				j++
+			}
+
+			// Get count by taking difference from j and i
+			count := j - i
+
+			// Add dup and count to output
+			res = append(res, []int{nums[i], count})
+
+			// Update i to last duplciated element seen
+			i = j - 1
+		}
+	}
+
+	return res
+}
+
+func TestDuplicatesAndCountInSorted(t *testing.T) {
+	fmt.Println(duplicatesAndCountInSorted([]int{3, 6, 8, 8, 10, 12, 15, 15, 15, 20})) // [8, 2] [15, 3]
+}
+
+func duplicatseAndCountWithHash(nums []int) [][]int {
+	var res [][]int
+	hashTable := make(map[int]int)
+
+	// Populate hashtable with elements and counts
+	for _, num := range nums {
+		hashTable[num]++
+	}
+
+	// Iterate hash and pick out the duplicate instances
+	for num, count := range hashTable {
+		if count > 1 {
+			res = append(res, []int{num, count})
+		}
+	}
+
+	return res
+}
+
+func TestDuplicatesAndCountWithHash(t *testing.T) {
+	fmt.Println(duplicatseAndCountWithHash([]int{3, 6, 8, 8, 10, 12, 15, 15, 15, 20})) // [8, 2] [15, 3]
+}
+
+// Returns the index positions of the two values that sum to K
+func twoSum(nums []int, k int) [][]int {
+	var res [][]int
+	hashTable := make(map[int]int)
+
+	for i := 0; i < len(nums); i++ {
+		complement := k - nums[i]
+
+		if idx, ok := hashTable[complement]; ok {
+			// We have seen a num in the list that matches the needed complement
+			res = append(res, []int{i, idx})
+		} else {
+			// Add the current num and its index to our hash table for later ref
+			hashTable[nums[i]] = i
+		}
+	}
+
+	return res
+}
+
+func TestTwoSum(t *testing.T) {
+	fmt.Println(twoSum([]int{6, 3, 8, 10, 16, 7, 5, 2, 9, 14}, 10)) // [5 1] [7 2]
 }
