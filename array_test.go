@@ -587,20 +587,21 @@ func contains(nums []int, key int) bool {
 }
 
 func unionUnsorted(arr1, arr2 []int) []int {
-	arr1Len := len(arr1)
-	arr2Len := len(arr2)
+	// Create map of arr1 values
+	unionMap := make(map[int]bool)
+	for _, num := range arr1 {
+		unionMap[num] = true
+	}
 
-	res := make([]int, arr1Len, arr1Len+arr2Len)
-
-	// copy all elements from one array
-	copy(res, arr1)
-
-	i := arr1Len
 	for _, num := range arr2 {
-		if !contains(res[:arr1Len], num) {
-			res = append(res, num)
-			i++
-		}
+		unionMap[num] = true
+	}
+
+	res := make([]int, len(unionMap))
+	i := 0
+	for k := range unionMap {
+		res[i] = k
+		i++
 	}
 
 	return res
@@ -609,7 +610,7 @@ func unionUnsorted(arr1, arr2 []int) []int {
 func TestUnionUnsorted(t *testing.T) {
 	test1 := []int{2, 6, 10, 15, 25}
 	test2 := []int{3, 6, 7, 15, 20}
-	fmt.Println(unionUnsorted(test1, test2)) // 2 6 10 15 25 3 7 20
+	fmt.Println(unionUnsorted(test1, test2)) // 2 6 10 15 25 3 7 20 (or some other order)
 }
 
 func intersectionUnsorted(arr1, arr2 []int) []int {
@@ -618,8 +619,14 @@ func intersectionUnsorted(arr1, arr2 []int) []int {
 
 	res := make([]int, 0, arr1Len+arr2Len)
 
+	// Create map of arr2 values
+	a2Map := make(map[int]bool)
+	for _, num := range arr2 {
+		a2Map[num] = true
+	}
+
 	for _, num := range arr1 {
-		if contains(arr2, num) {
+		if _, ok := a2Map[num]; ok {
 			res = append(res, num)
 		}
 	}
@@ -635,12 +642,16 @@ func TestIntersectionUnsorted(t *testing.T) {
 
 func differenceUnsorted(arr1, arr2 []int) []int {
 	arr1Len := len(arr1)
-	arr2Len := len(arr2)
+	res := make([]int, 0, arr1Len)
 
-	res := make([]int, 0, arr1Len+arr2Len)
+	// Create map of arr2 values
+	a2Map := make(map[int]bool)
+	for _, num := range arr2 {
+		a2Map[num] = true
+	}
 
 	for _, num := range arr1 {
-		if !contains(arr2, num) {
+		if _, ok := a2Map[num]; !ok {
 			res = append(res, num)
 		}
 	}
