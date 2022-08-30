@@ -1,8 +1,12 @@
 package main
 
 func factorial(n int) int {
-	if n < 0 || n == 0 {
+	if n < 0 {
 		return 0
+	}
+
+	if n == 0 || n == 1 {
+		return 1
 	}
 
 	factorial := 1
@@ -78,4 +82,11 @@ func permutations2(str []byte) [][]byte {
 
 	swapPermutations(str, 0)
 	return permutations
+}
+
+func combinations(n, r int) int {
+	t1 := factorial(n)
+	t2 := factorial(r)
+	t3 := factorial(n - r)
+	return t1 / (t2 * t3)
 }
