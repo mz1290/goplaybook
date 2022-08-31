@@ -644,3 +644,23 @@ func twoSum(nums []int, k int) [][]int {
 
 	return res
 }
+
+func transpose(nums [][]int) [][]int {
+	// Get the new numbe
+	nRows := len(nums[0]) // current number of columns
+	nCols := len(nums)    // current number of rows
+	result := make([][]int, nRows)
+
+	for i := range result {
+		result[i] = make([]int, nCols)
+	}
+
+	for row := 0; row < nRows; row++ {
+		for col := 0; col < nCols; col++ {
+			// Perform the transpose by copying
+			result[row][col] = nums[col][row]
+		}
+	}
+
+	return result
+}

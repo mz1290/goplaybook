@@ -256,3 +256,26 @@ func TestDuplicatesAndCountWithHash(t *testing.T) {
 func TestTwoSum(t *testing.T) {
 	fmt.Println(twoSum([]int{6, 3, 8, 10, 16, 7, 5, 2, 9, 14}, 10)) // [5 1] [7 2]
 }
+
+func TestTranspose(t *testing.T) {
+	test := [][]int{
+		{1, 1, 1, 1},
+		{2, 2, 2, 2},
+		{3, 3, 3, 3},
+	}
+
+	display := func() {
+		for row := 0; row < len(test); row++ {
+			for col := 0; col < len(test[0]); col++ {
+				fmt.Printf("%d ", test[row][col])
+			}
+			fmt.Printf("\n")
+		}
+	}
+
+	fmt.Println("BEFORE:")
+	display()
+	test = transpose(test)
+	fmt.Println("AFTER:")
+	display()
+}
