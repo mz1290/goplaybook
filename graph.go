@@ -51,3 +51,37 @@ func Idfs(matrix [][]int, start int) {
 		}
 	}
 }
+
+func BFS(matrix [][]int, i int) {
+	visited := make([]int, len(matrix[0]))
+	q := newQueueLL()
+
+	// Print start
+	fmt.Printf("%d ", i)
+
+	// Mark start vertex as visited
+	visited[i] = 1
+
+	// Add start to queue for further exploration
+	q.enqueue(i)
+
+	for !q.isEmpty() {
+		// Get the current vertex
+		u := q.dequeue()
+
+		// Explore each connected vertex
+		for v := 1; v < len(matrix); v++ {
+			// If vertex is connected and not already visited
+			if matrix[u][v] == 1 && visited[v] == 0 {
+				// Print current vertex
+				fmt.Printf("%d ", v)
+
+				// Mark vertex visited
+				visited[v] = 1
+
+				// Add vertex to queue for next exploration
+				q.enqueue(v)
+			}
+		}
+	}
+}

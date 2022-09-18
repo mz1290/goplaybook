@@ -98,6 +98,10 @@ func newQueueLL() QueueLL {
 	return QueueLL{nil, nil}
 }
 
+func (q *QueueLL) isEmpty() bool {
+	return q.Front == nil
+}
+
 func (q *QueueLL) enqueue(x int) {
 	// Create new node
 	temp := &Node{x, nil}

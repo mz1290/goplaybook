@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestDfs(t *testing.T) {
+func TestDfsBFS(t *testing.T) {
 	test := [][]int{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 1, 1, 0, 0, 0},
@@ -22,5 +22,8 @@ func TestDfs(t *testing.T) {
 
 	// Iterative
 	Idfs(test, 1)
+	fmt.Println()
+
+	BFS(test, 4)
 	fmt.Println()
 }
