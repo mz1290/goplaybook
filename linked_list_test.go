@@ -142,3 +142,12 @@ func TestDeleteCycleLL(t *testing.T) {
 	}
 	DisplayCycleLL(head)
 }
+
+func TestBubbleSortLL(t *testing.T) {
+	test1 := []int{10, 4, 12, 8}
+	head := CreateLL(test1)
+
+	DisplayLL(head)
+	head = SortLL(head)
+	DisplayLL(head)
+}

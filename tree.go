@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"container/list"
+	"fmt"
+)
 
 type TreeNode struct {
 	Left  *TreeNode
@@ -86,6 +89,18 @@ func (q *TreeQueueLL) dequeue() *TreeNode {
 
 func (q *TreeQueueLL) isEmpty() bool {
 	return q.Front == nil
+}
+
+func (q TreeQueueLL) Len() int {
+	count := 0
+
+	p := q.Front
+	for p != nil {
+		count++
+		p = p.Next
+	}
+
+	return count
 }
 
 func createTree(elements []int) *TreeNode {
@@ -183,6 +198,7 @@ func postorder(p *TreeNode) {
 	fmt.Printf("%d ", p.Data)
 }
 
+// BFS
 func levelorder(root *TreeNode) {
 	q := &TreeQueueLL{nil, nil}
 
@@ -219,6 +235,7 @@ func countNodes(p *TreeNode) int {
 	return 0
 }
 
+// DFS
 func treeHeight(root *TreeNode) int {
 	if root == nil {
 		return 0
@@ -326,4 +343,145 @@ func inorderSuccessor(p *TreeNode) *TreeNode {
 	}
 
 	return p
+}
+
+func diameterOfBinaryTree(root *TreeNode) int {
+	var dfs func(*TreeNode) int
+
+	// Variable to track max diameter seen
+	res := 0
+
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return -1
+		}
+
+		// Recursively find the heights of left and right subtrees
+		left := dfs(node.Left)
+		right := dfs(node.Right)
+
+		// Calculate diameter from left and right heights and update max
+		res = max(res, 2+left+right)
+
+		// Return the height from this node
+		return 1 + max(left, right)
+	}
+
+	dfs(root)
+	return res
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+
+	return y
+}
+
+func maxDepthBFS(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	queue := list.New()
+	queue.PushBack(root)
+
+	level := 0
+	for queue.Len() > 0 {
+		n := queue.Len()
+
+		for i := 0; i < n; i++ {
+			e := queue.Front()
+			queue.Remove(e)
+			node := e.Value.(*TreeNode)
+
+			if node.Left != nil {
+				queue.PushBack(node.Left)
+			}
+
+			if node.Right != nil {
+				queue.PushBack(node.Right)
+			}
+		}
+
+		level++
+	}
+	return level
+}
+
+type TrieNode struct {
+	Children  map[byte]*TrieNode
+	EndOfWord bool
+}
+
+func NewTrieNode() *TrieNode {
+	return &TrieNode{
+		Children:  make(map[byte]*TrieNode),
+		EndOfWord: false,
+	}
+}
+
+type Trie struct {
+	Root *TrieNode
+}
+
+func Constructor() Trie {
+	return Trie{
+		Root: NewTrieNode(),
+	}
+}
+
+func (this *Trie) Insert(word string) {
+	cur := this.Root
+
+	// Check every char in word
+	for i := 0; i < len(word); i++ {
+		if _, ok := cur.Children[word[i]]; !ok {
+			// Character not seen yet, add it to our children
+			cur.Children[word[i]] = NewTrieNode()
+		}
+
+		// Character seen, advance to the childs node
+		cur = cur.Children[word[i]]
+	}
+
+	// Cur is now set to last char of word
+	cur.EndOfWord = true
+}
+
+func (this *Trie) Search(word string) bool {
+	cur := this.Root
+
+	for i := 0; i < len(word); i++ {
+		if _, ok := cur.Children[word[i]]; !ok {
+			// Character does not exist, therefore word does not exist
+			return false
+		}
+
+		// Character seen, advance to the childs node
+		cur = cur.Children[word[i]]
+	}
+
+	// Cur is on last char of word
+	// Check if node is marked as end of word or if it is just prefix
+	return cur.EndOfWord
+}
+
+func (this *Trie) StartsWith(prefix string) bool {
+	cur := this.Root
+
+	for i := 0; i < len(prefix); i++ {
+		if _, ok := cur.Children[prefix[i]]; !ok {
+			// Character does not exist, therefore prefix does not exist
+			return false
+		}
+
+		// Character seen, advance to the childs node
+		cur = cur.Children[prefix[i]]
+	}
+
+	// Cur is on last char of prefix
+	// We don't care if prefix or prefix so can just return true
+	return true
 }

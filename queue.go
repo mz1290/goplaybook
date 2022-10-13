@@ -98,6 +98,18 @@ func newQueueLL() QueueLL {
 	return QueueLL{nil, nil}
 }
 
+func (q QueueLL) Len() int {
+	count := 0
+
+	p := q.Front
+	for p != nil {
+		count++
+		p = p.Next
+	}
+
+	return count
+}
+
 func (q *QueueLL) isEmpty() bool {
 	return q.Front == nil
 }

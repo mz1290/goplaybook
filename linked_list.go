@@ -225,6 +225,33 @@ func DeleteNodeCycleLL(p *Node, idx int) *Node {
 	return head
 }
 
+// Kind of like a selection sort. Could reduce swaps by tracking min and swap at end
+// See selection sort in sort.go
+// O(N^2)
+func SortLL(head *Node) *Node {
+	i := head
+
+	if i == nil {
+		return nil
+	}
+
+	for i != nil {
+		j := i.Next
+
+		for j != nil {
+			if i.Data > j.Data {
+				i.Data, j.Data = j.Data, i.Data
+			}
+
+			j = j.Next
+		}
+
+		i = i.Next
+	}
+
+	return head
+}
+
 func IsLinkedListSorted(ptr *Node) bool {
 	prev := ptr.Data
 	ptr = ptr.Next
